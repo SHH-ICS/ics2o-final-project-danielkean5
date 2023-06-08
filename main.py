@@ -1,8 +1,5 @@
-from itertools import cycle
-import random
-import sys
 import pygame
-from pygame.locals import *
+
 
 
 FPS = 30
@@ -10,18 +7,17 @@ SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 PIPEGAPSIZE  = 80
 BASEY        = SCREENHEIGHT * 0.79
-
+pygame.display.set_mode((SCREENWIDTH,SCREENHEIGHT))
 IMAGES, HITMASK = {}, {}
 
-PLAYER = (
-  'assets/redbird-downflap.png'
-  'assets/redbird-midflap.png'
-  'assets/redbird-upflap.png'
-)
+PLAYER = ('assets/redbird-downflap.png'), ('assets/redbird-midflap.png'),('assets/redbird-upflap.png')
+
 BACKGROUND = ('assets/background-day1.png')
 PIPES = ('assets/pipe-green.png')
 
 def fnc():
+
+  pygame.display.set_mode((SCREENWIDTH,SCREENHEIGHT))
   
   IMAGES['numbers'] = (
   pygame.image.load('assets/0.png').convert_alpha(),
@@ -41,26 +37,27 @@ IMAGES['startgame'] = pygame.image.load('assets/startgame.png').convert_alpha()
     
 IMAGES['base'] = pygame.image.load('assets/base.png').convert_alpha()
 
-while true:
-  IMAGES['player'] = (
-    pygame.image.load(PLAYER[playerindex]).convert()
+while True:
+  IMAGES['PLAYER'] = (
+    pygame.image.load('assets/redbird-midflap.png').convert_alpha()
   )
-  IMAGES['background'] = (
-    pygame.image.load(BACKGROUND[backgroundindex]).convert()
+  IMAGES['BACKGROUND'] = (
+    pygame.image.load('assets/background-day1.png').convert_alpha()
   )
   IMAGES['pipe'] = (
     pygame.transform.flip(
-      pygame.image.load(PIPES[pipeindex]).convert_alpha(), False, True),
-    pygame.image.load(PIPES[pipeindex]).convert_alpha(),
-        )
+    pygame.image.load('assets/pipe-green.png').convert_alpha(), False, True),
+    pygame.image.load('assets/pipe-green.png').convert_alpha()
+  )
   
 HITMASK['pipe'] = (
-getHitmask(images['pipe'])
+HITMASK(IMAGES['pipe'])
 )
 HITMASK['player'] = (
-getHitmask(images['player'][0]),
-getHitmask(images['player'][1]),
-getHitmask(images['player'][2])
+HITMASK(IMAGES['player'][0]),
+HITMASK(IMAGES['player'][1]),
+HITMASK(IMAGES['player'][2])
 )
 
 fnc()
+
