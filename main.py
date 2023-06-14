@@ -1,63 +1,82 @@
 import pygame
 
+pygame.init()
+
+clock = pygame.time.Clock()
+fps = 60
+
+screen_width = 432
+screen_height = 468
+
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption('Flappy Bird')
 
 
-FPS = 30
-SCREENWIDTH  = 288
-SCREENHEIGHT = 512
-PIPEGAPSIZE  = 80
-BASEY        = SCREENHEIGHT * 0.79
-pygame.display.set_mode((SCREENWIDTH,SCREENHEIGHT))
-IMAGES, HITMASK = {}, {}
+#define game variables
+ground_scroll = 0
+scroll_speed = 4
 
-PLAYER = ('assets/redbird-downflap.png'), ('assets/redbird-midflap.png'),('assets/redbird-upflap.png')
+#load images
+bg = pygame.transform.scale(pygame.image.load('assets/bg.png'),(432,468))
+ground_img = pygame.image.load('assets/ground.png')
 
-BACKGROUND = ('assets/background-day1.png')
-PIPES = ('assets/pipe-green.png')
 
-def fnc():
+class Bird(pygame.sprite.Sprite):
+	def __init__(self, x, y):
+		pygame.sprite.Sprite.__init__(self)
+		self.images = []
+		self.index = 0
+		self.counter = 0
+		for num in range(1, 4):
+			img = pygame.transform.scale(pygame.image.load(f'assets/bird{num}.png'), (25,18))
+			self.images.append(img)
+		self.image = self.images[self.index]
+		self.rect = self.image.get_rect()
+		self.rect.center = [x, y]
 
-  pygame.display.set_mode((SCREENWIDTH,SCREENHEIGHT))
-  
-  IMAGES['numbers'] = (
-  pygame.image.load('assets/0.png').convert_alpha(),
-  pygame.image.load('assets/1.png').convert_alpha(),
-  pygame.image.load('assets/2.png').convert_alpha(),
-  pygame.image.load('assets/3.png').convert_alpha(),
-  pygame.image.load('assets/4.png').convert_alpha(),
-  pygame.image.load('assets/5.png').convert_alpha(),
-  pygame.image.load('assets/6.png').convert_alpha(),
-  pygame.image.load('assets/7.png').convert_alpha(),
-  pygame.image.load('assets/8.png').convert_alpha(),
-  pygame.image.load('assets/9.png').convert_alpha()
-  )
-IMAGES['gameover'] = pygame.image.load('assets/gameover.png').convert_alpha()
-   
-IMAGES['startgame'] = pygame.image.load('assets/startgame.png').convert_alpha()
-    
-IMAGES['base'] = pygame.image.load('assets/base.png').convert_alpha()
+	def update(self):
 
-while True:
-  IMAGES['PLAYER'] = (
-    pygame.image.load('assets/redbird-midflap.png').convert_alpha()
-  )
-  IMAGES['BACKGROUND'] = (
-    pygame.image.load('assets/background-day1.png').convert_alpha()
-  )
-  IMAGES['pipe'] = (
-    pygame.transform.flip(
-    pygame.image.load('assets/pipe-green.png').convert_alpha(), False, True),
-    pygame.image.load('assets/pipe-green.png').convert_alpha()
-  )
-  
-HITMASK['pipe'] = (
-HITMASK(IMAGES['pipe'])
-)
-HITMASK['player'] = (
-HITMASK(IMAGES['player'][0]),
-HITMASK(IMAGES['player'][1]),
-HITMASK(IMAGES['player'][2])
-)
+		#handle the animation
+		self.counter += 1
+		flap_cooldown = 5
 
-fnc()
+		if self.counter > flap_cooldown:
+			self.counter = 0
+			self.index += 1
+			if self.index >= len(self.images):
+				self.index = 0
+		self.image = self.images[self.index]
 
+
+bird_group = pygame.sprite.Group()
+
+flappy = Bird(100, int(screen_height / 2))
+
+bird_group.add(flappy)
+
+
+run = True
+while run:
+
+	clock.tick(fps)
+
+	#draw background
+	screen.blit(bg, (0,0))
+
+	bird_group.draw(screen)
+	bird_group.update()
+
+	#draw and scroll the ground
+	screen.blit(ground_img, (ground_scroll, 768/2))
+	ground_scroll -= scroll_speed
+	if abs(ground_scroll) > 35:
+		ground_scroll = 0
+
+
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			run = False
+
+	pygame.display.update()
+
+pygame.quit()
